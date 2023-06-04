@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Create User
+        </title>
+    </head>
+    <body>
+        <h1>
+            {{user.full_name}}
+        </h1>
+        <img src={{user.image_url}}>
+        <button onclick="location.href = '/users/{{user.id}}/edit'">Edit</button>
+        <form action='/users/{{user.id}}/delete' method="POST">
+            <button name="delete">Delete</button>
+        </form>
+    </body>
+</html>

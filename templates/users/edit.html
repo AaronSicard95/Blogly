@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Edit User
+        </title>
+    </head>
+    <body>
+        <h1>
+            Editting {{user.full_name}}
+        </h1>
+        <form method="POST">
+            <input type="text" name="first_name" value={{user.first_name}}>
+            <input type="text" name="last_name" value={{user.last_name}}>
+            <input type="text" name='image_url' value={{user.image_url}}>
+            <input type="submit" value="Sumbit Edits">
+        </form>
+    </body>
+</html>

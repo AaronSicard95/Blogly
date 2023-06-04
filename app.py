@@ -11,16 +11,19 @@ the current application. To solve this, set up an application context
 with app.app_context(). See the documentation for more information.'
 
 Without it. No one updates this course. Your jeapardy example doesn't even work so I'm submitting this as is.
-I was originally using my own, but I copied the solution to see if the issue was on my end or not'"""
+I was originally using my own, but I copied the solution to see if the issue was on my end or not'
+
+"""
 
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///blogly"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'ihaveasecret'
+
 
 # Having the Debug Toolbar show redirects explicitly is often useful;
 # however, if you want to turn it off, you can uncomment this line:
@@ -28,10 +31,14 @@ app.config['SECRET_KEY'] = 'ihaveasecret'
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 toolbar = DebugToolbarExtension(app)
+db = SQLAlchemy()
+
+from models import db, connect_db, User
 
 
 connect_db(app)
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
