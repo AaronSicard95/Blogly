@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Posts
+        </title>
+    </head>
+    <body>
+        <h1>
+            Posts
+        </h1>
+            {%for post in posts%}
+            <h2>{{post.title}}</h2>
+            <a href="/posts/{{post.id}}">{{post.content}}</a>
+            <p>author: <a href="/users/{{post.user_id}}">{{post.author.full_name}}</a> at: {{post.created_at}}</p>
+            </li>
+            {%endfor%}
+    </body>
+</html>

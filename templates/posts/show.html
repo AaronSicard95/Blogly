@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {{post.title}}
+        </title>
+    </head>
+    <body>
+        <h1>
+            {{post.title}}
+        </h1>
+        <p>{{post.content}}</p>
+        <p>created on {{post.created_at}}</p>
+        <p>author: <a href="/users/{{user.id}}">{{user.full_name}}</a></p>
+        <button onclick="location.href = '/posts/{{post.id}}/edit'">Edit</button>
+        <form action='/posts/{{post.id}}/delete' method="POST">
+            <button name="delete">Delete</button>
+        </form>
+    </body>
+</html>

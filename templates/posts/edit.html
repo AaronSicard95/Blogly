@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Edit Post
+        </title>
+    </head>
+    <body>
+        <h1>
+            Edit Post {{post.title}}
+        </h1>
+        <form method="POST">
+            <input type="text" name="title" placeholder="Enter Title" value={{post.title}}>
+            <input type="text" name="content" placeholder="Post Message" value={{post.content}}>
+            <input type="button" value="cancel" onclick="location.href = '/posts/{{post.id}}'">
+            <input type="submit">
+        </form>
+    </body>
+</html>

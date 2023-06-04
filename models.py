@@ -18,11 +18,24 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False, default=DEFAULT_IMAGE_URL)
 
+    posts = db.relationship('Post', backref='author')
+
     @property
     def full_name(self):
         """Return full name of user."""
 
         return f"{self.first_name} {self.last_name}"
+
+class Post(db.Model):
+    """Site user."""
+
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 def connect_db(app):

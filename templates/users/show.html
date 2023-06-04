@@ -14,5 +14,20 @@
         <form action='/users/{{user.id}}/delete' method="POST">
             <button name="delete">Delete</button>
         </form>
+        <h2>
+            Posts
+        </h2>
+        <ul>
+            {% if posts|length %}
+                {%for post in posts%}
+                <li>
+                    <a href="/posts/{{post.id}}">{{post.title}}</a>
+                </li>
+                {%endfor%}
+            {% else %}
+                <p>User has not made any posts</p>
+            {% endif %}
+        </ul>
+        <button onclick="location.href = '/users/{{user.id}}/posts/new'">Add Post</button>
     </body>
 </html>

@@ -10,12 +10,15 @@
             Users
         </h1>
         <ul>
-            {%for user in users%}
             <li>
-                <a href="/users/{{user.id}}">{{user.full_name}}</a>
+                <p>{{post.title}}</p>
             </li>
-            {%endfor%}
+            <li>
+                <p>{{post.content}}</p>
+            </li>
+            <li>
+                <p>{{post.user_id}}</p>
+            </li>
         </ul>
-        <button onclick="location.href = '/users/new'">Add User</button>
     </body>
 </html>

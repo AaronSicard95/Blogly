@@ -18,6 +18,7 @@ I was originally using my own, but I copied the solution to see if the issue was
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///blogly"
@@ -33,7 +34,7 @@ app.config['SECRET_KEY'] = 'ihaveasecret'
 toolbar = DebugToolbarExtension(app)
 db = SQLAlchemy()
 
-from models import db, connect_db, User
+from models import db, connect_db, User, Post
 
 
 connect_db(app)
@@ -45,7 +46,14 @@ with app.app_context():
 def root():
     """Homepage redirects to list of users."""
 
-    return redirect("/users")
+    return redirect("/home")
+
+@app.route('/home')
+def showHome():
+    """Homepage redirects to list of users."""
+    posts= Post.query.order_by(Post.created_at.desc()).limit(5)
+
+    return render_template("/home.html", posts=posts)
 
 
 ##############################################################################
@@ -86,7 +94,8 @@ def users_show(user_id):
     """Show a page with info on a specific user"""
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/show.html', user=user)
+    posts = user.posts
+    return render_template('users/show.html', user=user, posts=posts)
 
 
 @app.route('/users/<int:user_id>/edit')
@@ -121,3 +130,64 @@ def users_destroy(user_id):
     db.session.commit()
 
     return redirect("/users")
+
+@app.route('/users/<int:user_id>/posts/new', methods={"GET"})
+def showPostForm(user_id):
+    user = User.query.get_or_404(user_id)
+
+    return render_template('posts/new.html', user=user)
+
+@app.route('/users/<int:user_id>/posts/new', methods={"POST"})
+def handleUserPost(user_id):
+    
+    new_post = Post(
+        title = request.form['title'],
+        content = request.form['content'],
+        created_at = date.today(),
+        user_id = user_id
+    )
+    db.session.add(new_post)
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}')
+
+@app.route('/posts')
+def posts_index():
+    """Show a page with info on all users"""
+
+    posts = Post.query.all()
+    return render_template('posts/index.html', posts=posts)
+
+@app.route('/posts/<int:post_id>')
+def showPost(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+
+    return render_template('posts/show.html', user=user, post=post)
+
+@app.route('/posts/<int:post_id>/edit')
+def editPost(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    return render_template('posts/edit.html', post=post)
+
+@app.route('/posts/<int:post_id>/edit', methods={"POST"})
+def handleEditPost(post_id):
+    
+    post = Post.query.get_or_404(post_id)
+    post.title = request.form['title'],
+    post.content = request.form['content'],
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f'/posts/{post_id}')
+
+@app.route('/posts/<int:post_id>/delete', methods={"POST"})
+def handleDelete(post_id):
+    
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(f'/users/{user.id}')

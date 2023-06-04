@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Make Post
+        </title>
+    </head>
+    <body>
+        <h1>
+            Add Post for {{user.full_name}}
+        </h1>
+        <form method="POST">
+            <input type="text" name="title" placeholder="Enter Title">
+            <input type="text" name="content" placeholder="Post Message">
+            <input type="button" value="cancel" onclick="location.href = '/users/{{user.id}}'">
+            <input type="submit">
+        </form>
+    </body>
+</html>
