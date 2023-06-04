@@ -2,17 +2,23 @@
 <html>
     <head>
         <title>
-            Posts
+            Tags
         </title>
     </head>
     <body>
-        <button onclick="location.href='/users'">Users</button>
-        <button onclick="location.href='/posts'">Posts</button>
-        <button onclick="location.href='/tags'">Tags</button>
+        <button onclick="location.href='/'">Home</button>
+        <p>
+            <button onclick="location.href='/tags/new'">Add Tag</button>
+            {%for tag in tags%}
+                <a href="/tags/{{tag.id}}">{{tag.name}}</a>
+            {%endfor%}
+        </p>
+        {%if selectedTag%}
         <h1>
-            Posts
+            {{selectedTag.name}}
         </h1>
-            {%for post in posts%}
+        <button onclick="location.href='tags/{{selectedTag.id}}/edit'">Edit Tag</button>
+        {%for post in selectedTag.posts%}
             <h2>{{post.title}}</h2>
             <a href="/posts/{{post.id}}">{{post.content}}</a>
             <p>author: <a href="/users/{{post.user_id}}">{{post.author.full_name}}</a> at: {{post.created_at}}</p>
@@ -20,5 +26,6 @@
                 <a href="/tags/{{tag.id}}">{{tag.name}}</a>
                 {%endfor%}</p>
             {%endfor%}
+        {%endif%}
     </body>
 </html>

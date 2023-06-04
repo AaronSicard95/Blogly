@@ -2,18 +2,16 @@
 <html>
     <head>
         <title>
-            Create User
+            Edit Tag
         </title>
     </head>
     <body>
         <button onclick="location.href='/'">Home</button>
         <h1>
-            Enter Info
+            Edit Tag {{tag.name}}
         </h1>
         <form method="POST">
-            <input type="text" name="first_name" placeholder="First Name">
-            <input type="text" name="last_name" placeholder="Last Name">
-            <input type="text" name='image_url' placeholder="Image URL">
+            <input type="text" name="name" placeholder="Enter Tag" value={{tag.name}}>
             <input type="submit">
         </form>
     </body>

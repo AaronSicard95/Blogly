@@ -18,7 +18,7 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False, default=DEFAULT_IMAGE_URL)
 
-    posts = db.relationship('Post', backref='author')
+    posts = db.relationship('Post',cascade="delete", backref='author')
 
     @property
     def full_name(self):
@@ -35,7 +35,26 @@ class Post(db.Model):
     title = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
+class PostTag(db.Model):
+    """Site user."""
+
+    __tablename__ = "posttags"
+
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey("tags.id"), primary_key=True)
+
+class Tag(db.Model):
+    """Site user."""
+
+    __tablename__ = "tags"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    
+    posts = db.relationship('Post', secondary='posttags', backref='tags')
 
 
 def connect_db(app):

@@ -34,7 +34,7 @@ app.config['SECRET_KEY'] = 'ihaveasecret'
 toolbar = DebugToolbarExtension(app)
 db = SQLAlchemy()
 
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post,Tag,PostTag
 
 
 connect_db(app)
@@ -134,16 +134,19 @@ def users_destroy(user_id):
 @app.route('/users/<int:user_id>/posts/new', methods={"GET"})
 def showPostForm(user_id):
     user = User.query.get_or_404(user_id)
+    tags = Tag.query.all()
 
-    return render_template('posts/new.html', user=user)
+    return render_template('posts/new.html', user=user, tags = tags)
 
 @app.route('/users/<int:user_id>/posts/new', methods={"POST"})
 def handleUserPost(user_id):
-    
+    slectedtags = request.form.getlist('tags')
+    tags = Tag.query.filter(Tag.id.in_(slectedtags)).all()
     new_post = Post(
         title = request.form['title'],
         content = request.form['content'],
         created_at = date.today(),
+        tags = tags,
         user_id = user_id
     )
     db.session.add(new_post)
@@ -168,15 +171,19 @@ def showPost(post_id):
 @app.route('/posts/<int:post_id>/edit')
 def editPost(post_id):
     post = Post.query.get_or_404(post_id)
+    tags = Tag.query.all()
 
-    return render_template('posts/edit.html', post=post)
+    return render_template('posts/edit.html', post=post, tags=tags)
 
 @app.route('/posts/<int:post_id>/edit', methods={"POST"})
 def handleEditPost(post_id):
     
+    slectedtags = request.form.getlist('tags')
+    tags = Tag.query.filter(Tag.id.in_(slectedtags)).all()
     post = Post.query.get_or_404(post_id)
-    post.title = request.form['title'],
-    post.content = request.form['content'],
+    post.title = request.form['title']
+    post.content = request.form['content']
+    post.tags = tags
     db.session.add(post)
     db.session.commit()
 
@@ -191,3 +198,53 @@ def handleDelete(post_id):
     db.session.commit()
 
     return redirect(f'/users/{user.id}')
+
+@app.route('/tags')
+def showTags():
+    tags = Tag.query.all()
+    return render_template('/tags/show.html', tags=tags)
+
+
+@app.route('/tags/<int:tag_id>')
+def showSpecificTag(tag_id):
+    tags = Tag.query.all()
+    selectedTag = Tag.query.get_or_404(tag_id)
+    return render_template('/tags/show.html', tags=tags, selectedTag=selectedTag)
+
+
+@app.route('/tags/new', methods=["GET"])
+def showNewTagForm():
+    return render_template('/tags/new.html')
+
+    
+@app.route('/tags/new', methods=["POST"])
+def handleNewTagForm():
+    new_tag = Tag(
+        name = request.form['name']
+    )
+    db.session.add(new_tag)
+    db.session.commit()
+    return redirect(f'/tags/{new_tag.id}')
+
+
+@app.route('/tags/<int:tag_id>/edit', methods=["GET"])
+def showEditTagForm(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('/tags/edit.html', tag=tag)
+
+    
+@app.route('/tags/<int:tag_id>/edit', methods=["POST"])
+def handleEditTagForm(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    tag.name = request.form['name']
+    db.session.add(tag)
+    db.session.commit()
+    return redirect(f'/tags/{tag_id}')
+
+    
+@app.route('/tags/<int:tag_id>/delete', methods=["POST"])
+def handleDeleteTag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+    return redirect(f'/tags')
